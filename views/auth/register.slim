@@ -1,0 +1,32 @@
+.section
+	h4.center-align Sign Up
+	.row
+		.input-field.col.s4.offset-s2
+			input#name.validate type="text" /
+			label for="name" Name
+		.input-field.col.s4
+			input#email.validate type="text" /
+			label for="email" Email
+	.row
+		.input-field.col.s4.offset-s2
+			input#password.validate type="password" /
+			label for="password" Password
+		.input-field.col.s4
+			select#gender name="gender"
+				option value="" selected=true disabled=true Choose your option
+				option value="Male" Male
+				option value="Female" Female
+				option value="Other" Other
+			label for="gender" gender
+	.row
+		.input-field.col.s4.offset-s2
+			input#contact_no.validate type="text" /
+			label for="contact_no" Contact Number
+		.input-field.col.s4
+			textarea#address.materialize-textarea
+			label for="address" Address
+	.row.center-align
+		a href="/login" Click here to login
+		br /
+		br /
+		.btn.waves-effect.waves-green onclick="register(this)" Register
