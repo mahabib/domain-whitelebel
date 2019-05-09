@@ -6,8 +6,19 @@ html lang="en"
     meta http-equiv="X-UA-Compatible" content="ie=edge"/
     title Whitelabeling App
 
+    /! Import Google Icon Font
+    link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/
+    
+    /! Import materialize.css
+    link href="/lib/materialize/css/materialize.min.css" media="screen,projection" rel="stylesheet" type="text/css"/
+    
+    /! Import my app.css
     link rel="stylesheet" href="/css/app.css"/
-  body
-    ==yield
+  body.grey.lighten-4
+    .container.grey.lighten-5
+      ==yield
 
-    script src="/js/app.js"
+    /! JavaScript at end of body for optimized loading
+    script src="/lib/materialize/js/materialize.min.js" type="text/javascript"
+
+    script src="/js/app.js" type="text/javascript"

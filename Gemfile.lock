@@ -4,9 +4,11 @@ GEM
     rack (2.0.7)
     roda (3.19.0)
       rack
+    sequel (5.20.0)
     slim (4.0.1)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
+    sqlite3 (1.4.1)
     temple (0.8.1)
     tilt (2.0.9)
 
@@ -15,7 +17,9 @@ PLATFORMS
 
 DEPENDENCIES
   roda (~> 3.19)
+  sequel (~> 5.20)
   slim (~> 4.0, >= 4.0.1)
+  sqlite3 (~> 1.4, >= 1.4.1)
   tilt (~> 2.0, >= 2.0.9)
 
 BUNDLED WITH

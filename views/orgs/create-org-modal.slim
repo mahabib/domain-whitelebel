@@ -1,0 +1,15 @@
+#createOrgModal.modal
+  .modal-content
+    h4.center-align Create a new organization
+    .row
+      .input-field.col.s12
+        input#name.validate placeholder="Placeholder" type="text" /
+        label for="name"  Name
+    .row
+      .input-field.col.s12
+        textarea#description.materialize-textarea
+        label for="description" Description
+
+  .modal-footer
+    .modal-close.waves-effect.waves-red.btn-flat Disagree
+    .modal-close.waves-effect.waves-green.btn-flat onclick="createOrg(this)" Add

@@ -1,0 +1,13 @@
+.section
+  .row
+    .col.s11.center-align
+      h5 USERS
+    .col.s1.center-align
+      a.btn-floating.waves-effect.waves-light.modal-trigger href="#createUserModal"
+        i.material-icons add
+
+  ul.collection
+    - @users.each do |user|
+      li.collection-item #{user[:name]}
+
+include views/users/create-user-modal
