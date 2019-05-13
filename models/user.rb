@@ -12,6 +12,7 @@ class User < Sequel::Model
       :name=>data[:name],
       :email=>data[:email],
       :gender=>data[:gender],
+      :contact_no=>data[:contact_no],
       :address=>data[:address]
     )
   end

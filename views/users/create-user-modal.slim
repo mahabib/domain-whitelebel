@@ -3,15 +3,22 @@
     h4.center-align Create a new User
     .row
       .input-field.col.s6
-        input#name.validate placeholder="Placeholder" type="text" /
+        input#name.validate type="text" /
         label for="name" Name
       .input-field.col.s6
-        input#email.validate placeholder="Placeholder" type="text" /
+        input#email.validate type="text" /
         label for="email" Email
     .row
       .input-field.col.s6
-        input#gender.validate placeholder="Placeholder" type="text" /
+        select#gender name="gender"
+          option value="" selected=true disabled=true Choose your option
+          option value="Male" Male
+          option value="Female" Female
+          option value="Other" Other
         label for="gender" Gender
+      .input-field.col.s6
+        input#contact_no.validate type="text" name="contact_no" /
+        label for="contact_no" Contact Number
     .row
       .input-field.col.s12
         textarea#address.materialize-textarea

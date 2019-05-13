@@ -2,8 +2,12 @@ console.log("app.js loaded");
 
 document.addEventListener('DOMContentLoaded', function() {
   var modalOptions = {};
-  var elems = document.querySelectorAll('.modal');
-  var instances = M.Modal.init(elems, modalOptions);
+  var modalElems = document.querySelectorAll('.modal');
+  var modalInstances = M.Modal.init(modalElems, modalOptions);
+
+  var selectOptions = {};
+  var selectElems = document.querySelectorAll('select');
+  var selectInstances = M.FormSelect.init(selectElems, selectOptions);
 });
 
 
@@ -40,11 +44,13 @@ function createUser(el) {
   var name = document.getElementById('name');
   var email = document.getElementById('email');
   var gender = document.getElementById('gender');
+  var contact_no = document.getElementById('contact_no');
   var address = document.getElementById('address');
   var vals = {
     'name': name.value,
     'email': email.value,
     'gender': gender.value,
+    'contact_no': contact_no.value,
     'address': address.value
   }
   var xhttp = new XMLHttpRequest();

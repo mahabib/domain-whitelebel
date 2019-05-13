@@ -32,12 +32,13 @@ class App < Roda
 
   route do |r|
     @host = request.host
-    @domain = 'id.local'
-    @subdomain = @host.split('.').count >= 3 ? @host.sub(".#{@domain}", '') : nil
-    puts "@subdomain: #{@subdomain}"
+    raise "Host should include '#{ENV['DOMAIN']}'" if !(@host.include? ENV["DOMAIN"])
+    @subdomain = @host.split('.').count >= 3 ? @host.sub(".#{ENV['DOMAIN']}", '') : nil
+    raise "Expecting a sudomain 'xxx.#{ENV['DOMAIN']}'" if !@subdomain
 
-    @valid_subdomains = ['demo', 'test']
-    raise "We don't recognise this, '#{@subdomain}' subdomain." if @subdomain && !(@valid_subdomains.include? @subdomain)
+
+    @org = Organization.where(:subdomain=>@subdomain).first
+    raise "We don't recognise this, '#{@subdomain}' subdomain." if !@org
 
     data = JSON.parse(request.body.read) rescue {}
 	  request.body.rewind
@@ -52,7 +53,7 @@ class App < Roda
 
     r.root do
       # view 'index'
-      r.redirect '/users'
+      r.redirect '/orgs'
     end
 
     r.on "orgs" do
@@ -68,13 +69,8 @@ class App < Roda
     end # /orgs
 
     r.on "users" do
-      @org = Organization.where(:subdomain=>@subdomain).first
-      raise "Invalid organization" if !@org
-
       r.get do
         @users = @org.users.collect{|x| x.values}
-        puts "@users"
-        puts @users.inspect
         view 'users/index'
       end
 
