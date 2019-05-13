@@ -52,21 +52,9 @@ class App < Roda
   	end
 
     r.root do
-      # view 'index'
-      r.redirect '/orgs'
+      @org_dets = @org.values
+      view 'orgs/detail'
     end
-
-    r.on "orgs" do
-      r.get do
-        @orgs = Organization.where(:subdomain=>@subdomain).collect{|x| x.values}
-        view 'orgs/index'
-      end
-
-      r.post do
-        org = Organization.create_organization(data)
-        { :success=>true, :values=>org.values }
-      end
-    end # /orgs
 
     r.on "users" do
       r.get do
