@@ -6,6 +6,7 @@ require 'slim/include'
 require_relative 'models'
 
 class App < Roda
+  plugin :placeholder_string_matchers
   plugin :indifferent_params
   plugin :render, engine: 'slim', views: 'views'
   plugin :all_verbs
@@ -31,14 +32,6 @@ class App < Roda
   end
 
   route do |r|
-    @host = request.host
-    @domain = 'id.local'
-    @subdomain = @host.split('.').count >= 3 ? @host.sub(".#{@domain}", '') : nil
-    puts "@subdomain: #{@subdomain}"
-
-    @valid_subdomains = ['demo', 'test']
-    raise "We don't recognise this, '#{@subdomain}' subdomain." if @subdomain && !(@valid_subdomains.include? @subdomain)
-
     data = JSON.parse(request.body.read) rescue {}
 	  request.body.rewind
 
@@ -52,12 +45,36 @@ class App < Roda
 
     r.root do
       # view 'index'
-      r.redirect '/users'
+      r.redirect '/orgs'
     end
 
     r.on "orgs" do
+      r.on ":subdomain" do |subdomain|
+        @org = Organization.where(:subdomain=>subdomain).first
+        raise "Invalid organization!" if !@org
+
+        r.on "users" do
+          r.get do
+            @users = @org.users.collect{|x| x.values}
+            view 'users/index'
+          end
+
+          r.post do
+            user = User.create_user(@org, data)
+            { :success=>true, :values=>user.values }
+          end
+        end # /orgs/:org_id/users
+
+        r.get do
+          @org_dets = @org.values
+          view 'orgs/detail'
+        end
+      end # /orgs/:org_id
+
       r.get do
-        @orgs = Organization.where(:subdomain=>@subdomain).collect{|x| x.values}
+        @orgs = Organization.collect{|x| x.values}
+        puts "@orgs"
+        puts @orgs.inspect
         view 'orgs/index'
       end
 
@@ -66,24 +83,7 @@ class App < Roda
         { :success=>true, :values=>org.values }
       end
     end # /orgs
-
-    r.on "users" do
-      @org = Organization.where(:subdomain=>@subdomain).first
-      raise "Invalid organization" if !@org
-
-      r.get do
-        @users = @org.users.collect{|x| x.values}
-        puts "@users"
-        puts @users.inspect
-        view 'users/index'
-      end
-
-      r.post do
-        user = User.create_user(@org, data)
-        { :success=>true, :values=>user.values }
-      end
-    end # /users
-  end
+  end # /route
 
 
 

@@ -6,8 +6,11 @@
       a.btn-floating.waves-effect.waves-light.modal-trigger href="#createUserModal"
         i.material-icons add
 
-  ul.collection
-    - @users.each do |user|
-      li.collection-item #{user[:name]}
+  - if @users.count < 1
+  	p No user exists
+  - else
+	  ul.collection
+	    - @users.each do |user|
+	      li.collection-item #{user[:name]}
 
 include views/users/create-user-modal

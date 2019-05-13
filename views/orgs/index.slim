@@ -7,10 +7,11 @@
         i.material-icons add
 
   ul.collection
-    li.collection-item
-      div
-        | Alvin
-        a.secondary-content href="#!" 
-          i.material-icons send
+    - @orgs.each do |org|
+      li.collection-item
+        div
+          | #{org[:name]}
+          a.secondary-content href="/orgs/#{org[:subdomain]}" 
+            i.material-icons send
 
 include views/orgs/create-org-modal

@@ -5,11 +5,9 @@ rescue LoadError
 end
 
 # Server
-namespace :server do
-	desc "run app via thin in 'development'"
-	task :dev do
-		system("thin -R config.ru -p 9090 start")
-	end
+desc "run app via thin in 'development'"
+task :dev_server do
+	system("thin -R config.ru -p #{ENV['PORT']} start")
 end
 
 
