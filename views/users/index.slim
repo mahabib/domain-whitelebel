@@ -7,7 +7,8 @@
         i.material-icons add
 
   - if @users.count < 1
-  	p No user exists
+  	.row
+	  	p.col.s11.center-align No user exists!
   - else
 	  ul.collection
 	    - @users.each do |user|

@@ -1,6 +1,6 @@
-require 'roda'
-require 'tilt'
-require 'slim'
+require 'rubygems'
+require 'bundler/setup'
+Bundler.require(:default)
 require 'slim/include'
 
 require_relative 'models'
@@ -35,23 +35,24 @@ class App < Roda
     data = JSON.parse(request.body.read) rescue {}
 	  request.body.rewind
 
+    @req_paths = request.path.split("/")
+	  @req_paths.shift # To remove first element which is empty
+
     if ENV['RACK_ENV'] == 'development'
-  	  puts "\n#{Time.now}"
-  	  puts "#{request.request_method} #{request.path}"
-  	  puts "xhr #{request.xhr?}"
+  	  puts "\n#{Time.now}\n#{request.request_method} #{request.path}\nxhr #{request.xhr?}"
   	  puts "params\n#{params}"
   	  puts "data\n#{data}"
   	end
 
     r.root do
-      # view 'index'
-      r.redirect '/orgs'
+      view 'index'
     end
 
     r.on "orgs" do
       r.on ":subdomain" do |subdomain|
         @org = Organization.where(:subdomain=>subdomain).first
         raise "Invalid organization!" if !@org
+        @org_dets = @org.values
 
         r.on "users" do
           r.get do
@@ -66,15 +67,12 @@ class App < Roda
         end # /orgs/:org_id/users
 
         r.get do
-          @org_dets = @org.values
           view 'orgs/detail'
         end
       end # /orgs/:org_id
 
       r.get do
         @orgs = Organization.collect{|x| x.values}
-        puts "@orgs"
-        puts @orgs.inspect
         view 'orgs/index'
       end
 
@@ -87,6 +85,7 @@ class App < Roda
 
 
 
+  # Helpers
   def self.symbolize(obj)
     return obj.reduce({}) do |memo, (k, v)|
       memo.tap { |m| m[k.to_sym] = symbolize(v) }
@@ -114,4 +113,4 @@ class App < Roda
 	def self.slug(text)
 		text ? text.strip.downcase.split(/\W+/).join("-") : ""
 	end
-end
+end # App

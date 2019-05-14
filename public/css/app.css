@@ -8,3 +8,18 @@ html {
   -moz-box-sizing: inherit;
   box-sizing: inherit;
 }
+
+nav .brand-logo {
+  margin-left: 10px;
+}
+
+.collection {
+  border: unset;
+}
+.collection .collection-item {
+  background: none;
+}
+
+.section {
+  padding: 10px;
+}

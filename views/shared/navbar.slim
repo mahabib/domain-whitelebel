@@ -1,0 +1,11 @@
+nav
+  .nav-wrapper
+    a.brand-logo href="/"  ID
+    ul#nav-mobile.right.hide-on-med-and-down
+      li class="#{request.path == '/orgs' ? 'active' : ''}"
+        a href="/orgs" Organizations
+      - if request.path.include? '/orgs/'
+        li class="#{(request.path.include? '/users') ? 'active' : ''}"
+          a href="/orgs/#{@org_dets[:subdomain]}/users" Users
+      li
+        a class="#{request.path == '/login' ? 'active' : ''}" href="/login" Login
