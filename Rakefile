@@ -4,6 +4,10 @@ rescue LoadError
   abort "\n.env.rb file does not exist. Please add it.\n\n"
 end
 
+require 'rubygems'
+require 'bundler/setup'
+Bundler.require(:default)
+
 # Server
 desc "run app via thin in 'development'"
 task :dev_server do
@@ -13,7 +17,7 @@ end
 # Migrate
 migrate = lambda do |env, version|
   ENV['RACK_ENV'] = env
-  require_relative 'db'
+  DB = Sequel.connect(ENV['DB_URL'])
   require 'logger'
   Sequel.extension :migration
   DB.loggers << Logger.new($stdout) if DB.loggers.empty?

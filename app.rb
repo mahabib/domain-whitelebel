@@ -1,6 +1,6 @@
-require 'roda'
-require 'tilt'
-require 'slim'
+require 'rubygems'
+require 'bundler/setup'
+Bundler.require(:default)
 require 'slim/include'
 
 require_relative 'models'
@@ -36,6 +36,8 @@ class App < Roda
     @subdomain = @host.split('.').count >= 3 ? @host.sub(".#{ENV['DOMAIN']}", '') : nil
     raise "Expecting a sudomain 'xxx.#{ENV['DOMAIN']}'" if !@subdomain
 
+    @req_paths = request.path.split("/")
+    @req_paths.shift # To remove first element which is empty
 
     @org = Organization.where(:subdomain=>@subdomain).first
     raise "We don't recognise this, '#{@subdomain}' subdomain." if !@org
@@ -44,11 +46,9 @@ class App < Roda
 	  request.body.rewind
 
     if ENV['RACK_ENV'] == 'development'
-  	  puts "\n#{Time.now}"
-  	  puts "#{request.request_method} #{request.path}"
-  	  puts "xhr #{request.xhr?}"
-  	  puts "params\n#{params}"
-  	  puts "data\n#{data}"
+      puts "\n#{Time.now}\n#{request.request_method} #{request.path}\nxhr #{request.xhr?}"
+      puts "params\n#{params}"
+      puts "data\n#{data}"
   	end
 
     r.root do
@@ -70,7 +70,7 @@ class App < Roda
   end
 
 
-
+  # Helpers
   def self.symbolize(obj)
     return obj.reduce({}) do |memo, (k, v)|
       memo.tap { |m| m[k.to_sym] = symbolize(v) }
@@ -98,4 +98,4 @@ class App < Roda
 	def self.slug(text)
 		text ? text.strip.downcase.split(/\W+/).join("-") : ""
 	end
-end
+end # App

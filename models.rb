@@ -1,5 +1,4 @@
-require_relative 'db'
-require 'sequel/model'
+DB = Sequel.connect(ENV['DB_URL'])
 
 if ENV['RACK_ENV'] == 'development'
   Sequel::Model.cache_associations = false
