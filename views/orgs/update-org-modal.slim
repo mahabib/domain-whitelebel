@@ -1,15 +1,15 @@
-#createOrgModal.modal
+#updateOrgModal.modal
   .modal-content
     h4.center-align Create a new organization
     .row
       .input-field.col.s12
-        input#name.validate type="text" /
+        input#name.validate type="text" value="#{@org_dets[:name]}" /
         label for="name"  Name
     .row
       .input-field.col.s12
-        textarea#description.materialize-textarea
+        textarea#description.materialize-textarea #{@org_dets[:description]}
         label for="description" Description
 
   .modal-footer
     .modal-close.waves-effect.waves-red.btn-flat Cancel
-    .waves-effect.waves-green.btn-flat onclick="createOrg(this)" Add
+    .waves-effect.waves-green.btn-flat onclick="updateOrg(this, '#{@org_dets[:subdomain]}')" Update

@@ -1,5 +1,12 @@
 .section
-  .row
-    .col.s11.center-align
-      h5 #{@org_dets[:name]}
-      p #{@org_dets[:description]}
+	.row
+		.col.s11.center-align
+			h5
+				| #{@org_dets[:name]}
+				- if session[:user]
+					a.btn-flat.waves-effect.waves-light.modal-trigger href="#updateOrgModal"
+						i.material-icons edit
+			p #{@org_dets[:description]}
+
+- if session[:user]
+	include views/orgs/update-org-modal

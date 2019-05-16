@@ -1,10 +1,13 @@
 .section
   .row
-    .col.s11.center-align
-      h5 ORGANIZATIONS
-    .col.s1.center-align
-      a.btn-floating.waves-effect.waves-light.modal-trigger href="#createOrgModal"
-        i.material-icons add
+    - if session[:user]
+      .col.s11.center-align
+        h5 ORGANIZATIONS
+      .col.s1.center-align
+        a.btn-floating.waves-effect.waves-light.modal-trigger href="#createOrgModal"
+          i.material-icons add
+    - else
+      h5.center-align ORGANIZATIONS
 
   ul.collection
     - @orgs.each do |org|
@@ -14,4 +17,5 @@
           a.secondary-content href="/orgs/#{org[:subdomain]}" 
             i.material-icons send
 
-include views/orgs/create-org-modal
+- if session[:user]
+  include views/orgs/create-org-modal

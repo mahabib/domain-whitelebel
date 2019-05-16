@@ -4,8 +4,13 @@ nav
     ul#nav-mobile.right.hide-on-med-and-down
       li class="#{request.path == '/orgs' ? 'active' : ''}"
         a href="/orgs" Organizations
+      li class="#{request.path == '/users' ? 'active' : ''}"
+        a href="/users" All Users
       - if request.path.include? '/orgs/'
         li class="#{(request.path.include? '/users') ? 'active' : ''}"
-          a href="/orgs/#{@org_dets[:subdomain]}/users" Users
-      li
-        a class="#{request.path == '/login' ? 'active' : ''}" href="/login" Login
+          a href="/orgs/#{@org_dets[:subdomain]}/users" Org Users
+      - if session[:user]
+        li.link style="padding: 0 15px;" onclick="logout(this)" Logout
+      - elsif request.path != '/login' &&  request.path != '/register'
+        li class="#{request.path == '/login' ? 'active' : ''}"
+          a href="/login" Login

@@ -14,17 +14,22 @@ class App < Roda
   plugin :error_handler
   plugin :json
   plugin :static, ['/css', '/js', '/images', '/lib'], root: 'public'
+  use Rack::Session::Cookie, secret: ENV['RACK_SECRET'], key: ENV['RACK_SECRET_KEY']
+  use Rack::Protection
+  plugin :csrf
+  plugin :head
 
   error do |e|
     puts e.class, e.message, e.backtrace
-    if request.xhr?
-			{
-				:success => false,
-				:error => e.message
-			}
-		else
-      view :content=>"<p><strong>Oops, an error occurred.</strong></p><p>#{e.message}</p>"
-		end
+    # if request.xhr?
+		# 	{
+		# 		:success => false,
+		# 		:error => e.message
+		# 	}
+		# else
+    #   view :content=>"<p><strong>Oops, an error occurred.</strong></p><p>#{e.message}</p>"
+		# end
+    e.message
   end
 
   not_found do
@@ -48,6 +53,48 @@ class App < Roda
       view 'index'
     end
 
+    r.on "register" do
+      r.redirect '/' if session[:user]
+      r.get do
+        view 'auth/register'
+      end
+
+      r.post do
+        User.register data
+        {
+          :success => true
+        }
+      end
+    end # /login
+    
+    r.on "login" do
+      r.redirect '/' if session[:user]
+      r.get do
+        view 'auth/login'
+      end
+
+      r.post do
+        ret = User.login data
+        session[:user] = ret[:user]
+        {
+          :success => true,
+          :values => {:token=>ret[:token]}
+        }
+      end
+    end # /login
+
+    r.post "logout" do
+      session.clear
+      { :success=>true }
+    end
+
+    r.on "users" do
+      r.get do
+        @users = User.collect{|x| x.values}
+        view 'users/index'
+      end
+    end # /users
+
     r.on "orgs" do
       r.on ":subdomain" do |subdomain|
         @org = Organization.where(:subdomain=>subdomain).first
@@ -56,16 +103,25 @@ class App < Roda
 
         r.on "users" do
           r.get do
-            @users = @org.users.collect{|x| x.values}
-            view 'users/index'
+            @org_users = @org.org_users.collect{|x| x.values.merge(:user=>x.user.values)}
+            view 'org-users/index'
           end
 
           r.post do
-            user = User.create_user(@org, data)
-            { :success=>true, :values=>user.values }
+            raise "Unauthorized acess!" if !session[:user]
+            org_user = OrgUser.create_org_user(@org, data)
+            { :success=>true, :values=>org_user.values.merge(:user=>org_user.user.values) }
           end
         end # /orgs/:org_id/users
 
+        r.put do
+          raise "Unauthorized acess!" if !session[:user]
+          @org.update_org(data)
+          {
+            :success => true
+          }
+        end
+        
         r.get do
           view 'orgs/detail'
         end
@@ -77,6 +133,7 @@ class App < Roda
       end
 
       r.post do
+        raise "Unauthorized acess!" if !session[:user]
         org = Organization.create_organization(data)
         { :success=>true, :values=>org.values }
       end
