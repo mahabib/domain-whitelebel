@@ -4,5 +4,8 @@ nav
     ul#nav-mobile.right.hide-on-med-and-down
       li class="#{request.path == '/users' ? 'active' : ''}"
         a href="/users" Users
-      li
-        a class="#{request.path == '/login' ? 'active' : ''}" href="/login" Login
+      - if session[:user]
+        li.link style="padding: 0 15px;" onclick="logout(this)" Logout
+      - elsif request.path != '/login' &&  request.path != '/register'
+        li class="#{request.path == '/login' ? 'active' : ''}"
+          a href="/login" Login

@@ -9,12 +9,19 @@ html {
   box-sizing: inherit;
 }
 
+.link {
+  cursor: pointer;
+}
+
 nav .brand-logo {
   margin-left: 10px;
 }
 
 .collection {
-  border: unset;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  border-right: unset;
+  border-left: unset;
 }
 .collection .collection-item {
   background: none;

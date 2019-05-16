@@ -1,0 +1,31 @@
+.section
+	.row
+		- if session[:user]
+			.col.s11.center-align
+				h5 USERS
+			.col.s1.center-align
+				a.btn-floating.waves-effect.waves-light.modal-trigger href="#createOrgUserModal"
+					i.material-icons add
+		- else
+			h5.center-align USERS
+			
+	- if @org_users.count < 1
+		.row
+			p.col.s11.center-align No user exists!
+	- else
+		ul.collection
+			- @org_users.each do |org_user|
+				li.row.collection-item
+					.col.s4
+						p
+							| #{org_user[:user][:name]}
+							br/
+							| #{org_user[:user][:email]}
+					.col.s4
+						p
+							| #{org_user[:user][:gender]}
+							br/
+							| #{org_user[:user][:contact_no]}
+					.col.s4 #{org_user[:user][:address]}
+					
+include views/org-users/create-user-modal
