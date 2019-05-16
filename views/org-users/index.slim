@@ -1,13 +1,6 @@
 .section
 	.row
-		- if session[:user]
-			.col.s11.center-align
-				h5 USERS
-			.col.s1.center-align
-				a.btn-floating.waves-effect.waves-light.modal-trigger href="#createOrgUserModal"
-					i.material-icons add
-		- else
-			h5.center-align USERS
+		h5.center-align USERS
 			
 	- if @org_users.count < 1
 		.row
@@ -28,4 +21,3 @@
 							| #{org_user[:user][:contact_no]}
 					.col.s4 #{org_user[:user][:address]}
 					
-include views/org-users/create-user-modal

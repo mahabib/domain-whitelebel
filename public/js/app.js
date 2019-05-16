@@ -75,17 +75,11 @@ function updateOrg(el, subdomain) {
 function createOrgUser(el) {
   if (!window.XMLHttpRequest) { alert("Sorry, This browser doesn't have support for XMLHttpRequest"); }
 
-  var modal = M.Modal.getInstance(document.getElementById('createOrgUserModal'));
-  var email = document.getElementById('email');
-  var vals = {
-    'email': email.value
-  }
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4) {
       if (this.status == 200) {
-        modal.close();
-        alert("A User Added Successfully");
+        alert("Done");
         location.reload();
       } else {
         alert(this.responseText);
@@ -97,7 +91,7 @@ function createOrgUser(el) {
   xhttp.setRequestHeader("Content-Type", "application/json");
   xhttp.setRequestHeader("X-CSRF-TOKEN", csrfToken.content);
   xhttp.setRequestHeader("Authorization", "Bearer  +localStorage.getItem('idToken')"+localStorage.getItem('idToken'));
-  xhttp.send(JSON.stringify(vals));
+  xhttp.send();
 }
 
 function register(el) {

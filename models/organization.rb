@@ -24,4 +24,10 @@ class Organization < Sequel::Model
       :description=>data[:description]
     )
   end
+
+  def get_dets usr=nil
+    ret = self.values.merge(:following=>false)
+    ret[:following] = true if usr && org_users_dataset.where(:userid=>usr.id).count > 0
+    ret
+  end
 end

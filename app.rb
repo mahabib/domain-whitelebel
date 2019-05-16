@@ -36,16 +36,13 @@ class App < Roda
 	end
 
 	route do |r|
-		@host = request.host
-		raise "Host should include '#{ENV['DOMAIN']}'" if !(@host.include? ENV["DOMAIN"])
-		@subdomain = @host.split('.').count >= 3 ? @host.sub(".#{ENV['DOMAIN']}", '') : nil
-		raise "Expecting a sudomain 'xxx.#{ENV['DOMAIN']}'" if !@subdomain
-
 		@req_paths = request.path.split("/")
 		@req_paths.shift # To remove first element which is empty
 
-		@org = Organization.where(:subdomain=>@subdomain).first
-		raise "We don't recognise this, '#{@subdomain}' subdomain." if !@org
+		@org = Organization.where(:domain=>request.host).first
+		raise "We don't recognise this, '#{request.host}'." if !@org
+
+		@user = session[:user] ? User.where(:email=>session[:user]).first : nil
 
 		data = JSON.parse(request.body.read) rescue {}
 		request.body.rewind
@@ -57,7 +54,7 @@ class App < Roda
 		end
 
 		r.root do
-			@org_dets = @org.values
+			@org_dets = @org.get_dets(@user)
 			view 'orgs/detail'
 		end
 
@@ -83,7 +80,7 @@ class App < Roda
 
       r.post do
         ret = User.login data
-        session[:user] = ret[:user]
+        session[:user] = ret[:user][:email]
         {
           :success => true,
           :values => {:token=>ret[:token]}
@@ -110,9 +107,9 @@ class App < Roda
 			end
 
 			r.post do
-				raise "Unauthorized acess!" if !session[:user]
-				org_user = OrgUser.create_org_user(@org, data)
-				{ :success=>true, :values=>org_user.values.merge(:user=>org_user.user.values) }
+				raise "Unauthorized acess!" if !@user
+				OrgUser.create_or_remove_org_user(@org, @user)
+        { :success=>true }
 			end
 		end # /users
 	end
