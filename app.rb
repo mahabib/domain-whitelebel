@@ -47,6 +47,8 @@ class App < Roda
 		@org = Organization.where(:subdomain=>@subdomain).first
 		raise "We don't recognise this, '#{@subdomain}' subdomain." if !@org
 
+		@user = session[:user] ? User.where(:email=>session[:user]).first : nil
+
 		data = JSON.parse(request.body.read) rescue {}
 		request.body.rewind
 
@@ -57,12 +59,12 @@ class App < Roda
 		end
 
 		r.root do
-			@org_dets = @org.values
+			@org_dets = @org.get_dets(@user)
 			view 'orgs/detail'
 		end
 
 		r.on "register" do
-      r.redirect '/' if session[:user]
+      r.redirect '/' if @user
       r.get do
         view 'auth/register'
       end
@@ -76,14 +78,14 @@ class App < Roda
     end # /login
 
 		r.on "login" do
-      r.redirect '/' if session[:user]
+      r.redirect '/' if @user
       r.get do
         view 'auth/login'
       end
 
       r.post do
         ret = User.login data
-        session[:user] = ret[:user]
+        session[:user] = ret[:user][:email]
         {
           :success => true,
           :values => {:token=>ret[:token]}
@@ -110,9 +112,9 @@ class App < Roda
 			end
 
 			r.post do
-				raise "Unauthorized acess!" if !session[:user]
-				org_user = OrgUser.create_org_user(@org, data)
-				{ :success=>true, :values=>org_user.values.merge(:user=>org_user.user.values) }
+				raise "Unauthorized acess!" if !@user
+				OrgUser.create_or_remove_org_user(@org, @user)
+        { :success=>true }
 			end
 		end # /users
 	end

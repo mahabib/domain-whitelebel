@@ -6,6 +6,19 @@
 				- if session[:user]
 					a.btn-flat.waves-effect.waves-light.modal-trigger href="#updateOrgModal"
 						i.material-icons edit
+			- if !session[:user]
+				a.btn-flat.waves-effect.waves-light href="/login"
+					i.material-icons.left favorite_border
+					| Follow
+			- else
+				- if @org_dets[:following]
+					.btn-flat.waves-effect.waves-light onclick="createOrgUser(this, '#{@org_dets[:subdomain]}')"
+						i.material-icons.left favorite
+						| Following
+				- else
+					.btn-flat.waves-effect.waves-light onclick="createOrgUser(this, '#{@org_dets[:subdomain]}')"
+						i.material-icons.left favorite_border
+						| Follow
 			p #{@org_dets[:description]}
 
 include views/orgs/update-org-modal

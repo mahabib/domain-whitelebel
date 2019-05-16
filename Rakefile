@@ -4,8 +4,6 @@ rescue LoadError
   abort "\n.env.rb file does not exist. Please add it.\n\n"
 end
 
-puts "\n=========================\nENV - #{ENV['RACK_ENV']}\n#{Time.now}\n=========================\n\n"
-
 require 'rubygems'
 require 'bundler/setup'
 Bundler.require(:default)
@@ -66,6 +64,7 @@ end
 # Seed
 desc "Seed development database"
 task :dev_seed do
+  system 'ruby seed/user.rb'
   system 'ruby seed/organization.rb'
 end
 
