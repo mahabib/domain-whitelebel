@@ -65,6 +65,7 @@ end
 # Seed
 desc "Seed development database"
 task :dev_seed do
+  system 'ruby seed/user.rb'
   system 'ruby seed/organization.rb'
 end
 

@@ -49,12 +49,14 @@ class App < Roda
   	  puts "data\n#{data}"
   	end
 
+    @user = session[:user] ? User.where(:email=>session[:user]).first : nil
+
     r.root do
       view 'index'
     end
 
     r.on "register" do
-      r.redirect '/' if session[:user]
+      r.redirect '/' if @user
       r.get do
         view 'auth/register'
       end
@@ -68,14 +70,14 @@ class App < Roda
     end # /login
     
     r.on "login" do
-      r.redirect '/' if session[:user]
+      r.redirect '/' if @user
       r.get do
         view 'auth/login'
       end
 
       r.post do
         ret = User.login data
-        session[:user] = ret[:user]
+        session[:user] = ret[:user][:email]
         {
           :success => true,
           :values => {:token=>ret[:token]}
@@ -99,7 +101,7 @@ class App < Roda
       r.on ":subdomain" do |subdomain|
         @org = Organization.where(:subdomain=>subdomain).first
         raise "Invalid organization!" if !@org
-        @org_dets = @org.values
+        @org_dets = @org.get_dets(@user)
 
         r.on "users" do
           r.get do
@@ -108,14 +110,14 @@ class App < Roda
           end
 
           r.post do
-            raise "Unauthorized acess!" if !session[:user]
-            org_user = OrgUser.create_org_user(@org, data)
-            { :success=>true, :values=>org_user.values.merge(:user=>org_user.user.values) }
+            raise "Unauthorized acess!" if !@user
+            OrgUser.create_or_remove_org_user(@org, @user)
+            { :success=>true }
           end
         end # /orgs/:org_id/users
 
         r.put do
-          raise "Unauthorized acess!" if !session[:user]
+          raise "Unauthorized acess!" if !@user
           @org.update_org(data)
           {
             :success => true
@@ -133,7 +135,7 @@ class App < Roda
       end
 
       r.post do
-        raise "Unauthorized acess!" if !session[:user]
+        raise "Unauthorized acess!" if !@user
         org = Organization.create_organization(data)
         { :success=>true, :values=>org.values }
       end
