@@ -2,8 +2,8 @@ class User < Sequel::Model
   one_to_many :org_users, :key=>:userid
 
   def self.register(data)
-    data = App.strip_and_squeeze(data)
-    data = App.symbolize(data)
+    data = Helpers.strip_and_squeeze(data)
+    data = Helpers.symbolize(data)
     raise "Name is required!" if !data[:name]
     raise "Email is required!" if !data[:name]
     raise "Email already exists!" if User.where(:email=>data[:email]).count > 0
@@ -21,8 +21,8 @@ class User < Sequel::Model
   end
 
   def self.login(data)
-    data = App.strip_and_squeeze(data)
-    data = App.symbolize(data)
+    data = Helpers.strip_and_squeeze(data)
+    data = Helpers.symbolize(data)
     raise "Email is required!" if !data[:email] || data[:email] == ""
     raise "Password is required!" if !data[:password] || data[:password] == ""
 

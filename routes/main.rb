@@ -1,5 +1,4 @@
 App.route("all-users") do |r|
-  App.check_access(true, @subdomain, @special_org)
   data = @data
   r.get do
     @users = User.collect{|x| x.values}
@@ -8,9 +7,8 @@ App.route("all-users") do |r|
 end # /users
 
 App.route("orgs") do |r|
-  App.check_access(true, @subdomain, @special_org)
   data = @data
-  r.on ":subdomain" do |subdomain|
+  r.on String do |subdomain|
     @org = Organization.where(:subdomain=>subdomain).first
     raise "Invalid organization!" if !@org
     @org_dets = @org.get_dets(@user)
@@ -20,22 +18,8 @@ App.route("orgs") do |r|
         @org_users = @org.org_users.collect{|x| x.values.merge(:user=>x.user.values)}
         view 'org-users/index'
       end
-
-      r.post do
-        raise "Unauthorized acess!" if !@user
-        OrgUser.create_or_remove_org_user(@org, @user)
-        { :success=>true }
-      end
     end # /orgs/:org_id/users
 
-    r.put do
-      raise "Unauthorized acess!" if !@user
-      @org.update_org(data)
-      {
-        :success => true
-      }
-    end
-    
     r.get do
       view 'orgs/detail'
     end
@@ -54,12 +38,6 @@ App.route("orgs") do |r|
 end # /orgs
 
 App.route("passion") do |r|
-  if !App.accessible(true, @subdomain, @special_org)
-    response.status = 404
-    response['Content-Type'] = 'text/html'
-    response.write("Where did it go?")
-  end
-
   r.get do
     "Passion"
   end

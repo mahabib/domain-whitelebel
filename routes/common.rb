@@ -37,3 +37,28 @@ App.route("logout") do |r|
     { :success=>true }
   end
 end
+
+App.route("api") do |r|
+  data = @data
+  r.on "orgs" do
+    r.on String do |subdomain|
+      @org = Organization.where(:subdomain=>subdomain).first
+      raise "Invalid organization!" if !@org
+      @org_dets = @org.get_dets(@user)
+
+      r.post "users" do
+        raise "Unauthorized acess!" if !@user
+        OrgUser.create_or_remove_org_user(@org, @user)
+        { :success=>true }
+      end
+
+      r.put do
+        raise "Unauthorized acess!" if !@user
+        @org.update_org(data)
+        {
+          :success => true
+        }
+      end
+    end # /api/orgs/:subdomain
+  end # /api/orgs
+end

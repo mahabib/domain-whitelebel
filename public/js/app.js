@@ -64,7 +64,7 @@ function updateOrg(el, subdomain) {
     }
   }
 
-  xhttp.open("PUT", "/orgs/"+subdomain, true);
+  xhttp.open("PUT", "/api/orgs/"+subdomain, true);
   xhttp.setRequestHeader("Content-Type", "application/json");
   xhttp.setRequestHeader("X-CSRF-TOKEN", csrfToken.content);
   xhttp.setRequestHeader("Authorization", "Bearer  +localStorage.getItem('idToken')"+localStorage.getItem('idToken'));
@@ -86,7 +86,7 @@ function createOrgUser(el, subdomain) {
     }
   }
 
-  xhttp.open("POST", "/orgs/"+subdomain+"/users", true);
+  xhttp.open("POST", "/api/orgs/"+subdomain+"/users", true);
   xhttp.setRequestHeader("Content-Type", "application/json");
   xhttp.setRequestHeader("X-CSRF-TOKEN", csrfToken.content);
   xhttp.setRequestHeader("Authorization", "Bearer  +localStorage.getItem('idToken')"+localStorage.getItem('idToken'));
