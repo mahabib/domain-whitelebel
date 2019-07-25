@@ -1,2 +1,2 @@
 # domain-whitelebel
-This is an Roda (A ruby routing toolkit) app which gives a white label domain/subdomain for different client.
+This is a Roda application (Roda is a ruby routing toolkit) which enable a white label domain/subdomain for different client.
